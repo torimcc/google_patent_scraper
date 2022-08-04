@@ -140,11 +140,6 @@ class scraper_class:
             patent_number = single_citation.find('span',itemprop='publicationNumber').get_text()
         except:
             patent_number = ''
-        # ~ Get patent title ~ #
-         try:
-            title = single_citation.find('span',itemprop='title').get_text()
-        except:
-            patent_number = ''
         # ~ Get priority date ~ #
         try:
             priority_date = single_citation.find('td',itemprop='priorityDate').get_text()
@@ -168,6 +163,7 @@ class scraper_class:
             - inventor_name             (json)  : inventors of patent 
             - assignee_name_orig        (json)  : original assignees to patent
             - assignee_name_current     (json)  : current assignees to patent
+            - title                     (str)  : title
             - pub_date                  (str)   : publication date
             - filing_date               (str)   : filing date
             - priority_date             (str)   : priority date
@@ -195,7 +191,11 @@ class scraper_class:
             assignee_name_current = [{'assignee_name':x.get_text()} for x in soup.find_all('dd',itemprop='assigneeCurrent')]
         except:
             assignee_name_current = []
-          
+         # ~ Patent title ~ #
+         try:
+            title = [{'title':x.get_text()} for x in soup.find_all('dd',itemprop='title')]
+        except:
+            title = []
         # Publication Date #
         try:
             pub_date = soup.find('dd',itemprop='publicationDate').get_text()
@@ -281,6 +281,7 @@ class scraper_class:
         return({'inventor_name':json.dumps(inventor_name),
                 'assignee_name_orig':json.dumps(assignee_name_orig),
                 'assignee_name_current':json.dumps(assignee_name_current),
+                'title':title,
                 'pub_date':pub_date,
                 'priority_date':priority_date,
                 'grant_date':grant_date,
@@ -294,9 +295,10 @@ class scraper_class:
     def get_scraped_data(self,soup,patent,url):
         # ~~ Parse individual patent ~~ #
         parsing_individ_patent = self.process_patent_html(soup)
-        # ~~ Add url + patent to dictionary ~~ #
+        # ~~ Add url + patent + titleto dictionary ~~ #
         parsing_individ_patent['url'] = url
         parsing_individ_patent['patent'] = patent
+        parsing_individ_patent['title'] = title
         # ~~ Return patent info ~~ #
         return(parsing_individ_patent)
 
