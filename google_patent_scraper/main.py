@@ -140,6 +140,11 @@ class scraper_class:
             patent_number = single_citation.find('span',itemprop='publicationNumber').get_text()
         except:
             patent_number = ''
+        # ~ Get patent title ~ #
+         try:
+            title = single_citation.find('span',itemprop='title').get_text()
+        except:
+            patent_number = ''
         # ~ Get priority date ~ #
         try:
             priority_date = single_citation.find('td',itemprop='priorityDate').get_text()
